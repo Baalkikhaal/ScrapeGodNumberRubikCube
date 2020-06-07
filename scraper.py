@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import numpy as np
 import matplotlib.pyplot as plt
+import requests
 
 # Helper functions here
 
@@ -127,7 +128,6 @@ def getHTML( online, filename ):
         else read the offline saved HTMl page
     """
     if online:
-        import requests
         r = requests.get("https://cube20.org/qtm/")
 
         #check for success of requests

@@ -12,16 +12,17 @@ I arrived at this website while browsing [OpenAI](https://openai.com/) and how t
 
 Rubik cube fascinates many people due to the simplicity of the puzzle in terms of design yet complexity of the puzzle in terms of variations in the positions. One can start with a solved position and with few transformations, scramble it into a position apparently very different from the solved position. The mathematicians have come up with definitions to quantify how less or how more scrambled a Rubik cube is.
 
-A position is any state of the Rubik cube.
+### Definitions
 
-A move is defined as any transformation on the cube. Moves include rotation of the faces.
+- A **position** is any state of the Rubik cube.
 
-For any position, distance  is defined as the minimum number of moves required to transform the cube into a solved position.
+- A **move** is defined as any transformation on the cube. Moves include rotation of the faces.
 
-There are two metrics to define a move.
+- For any position, **distance**  is defined as the minimum number of moves required to transform the cube into a solved position.
 
-- Quarter Turn metric that considers any 90 degree turn as a move
-- Half Turn metric that considers any of 90, 180, 270 degree turn as a move.
+- There are two **metrics** to define a move.
+    - Quarter Turn metric that considers any 90 degree turn as a move
+    - Half Turn metric that considers any of 90, 180, 270 degree turn as a move.
 
 The authors asked the question
 
@@ -35,13 +36,13 @@ and found that there exist only one unique position at at distance of 26 moves. 
 
 ## Requirements
 
-We need to setup a Python virtual environment with the following packages/modules.
+We need to setup a Python virtual environment with the following packages/modules. Ipython is optional and is needed for prototyping. We can also install Jupyter notebook for prototyping.
 
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
 - [Requests](https://2.python-requests.org/en/master/)
 - numpy
 - matplotlib
-- ipython
+- ipython (optional)
 
 ## Installation
 
@@ -52,6 +53,9 @@ We need to setup a Python virtual environment with the following packages/module
 - Activate the environment
 
         $.\venv\Scripts\activate
+
+- Install the requirements
+        $pip install -r requirements.txt
 
 - run the script
 
@@ -73,6 +77,9 @@ The plot in log scale shows the dramatic rise in the number of positions with di
 
 There are two ways to fetch the HTML file. Either directly requesting online the server for the page by sending a HTTP request to the site URL using `requests` module or by saving first the file offline. Either way is possible via the script.
 
+        if online:
+            r = requests.get("https://cube20.org/qtm/")
+
 Once we get the file, make a `beautiful soup` out of it by
 
     soup = BeautifulSoup(r.text, features="html.parser")
@@ -85,7 +92,38 @@ For the current project, we use `html.parser`.
 
 ### Scraping the data
 
-BeautifulSoup provides methods to navigate, search and modify the tree structure.
+`BeautifulSoup` provides attributes to navigate like
+
+- using tag identifiers  like
+    - `soup.title` reads the title
+    - `soup.a` reads the first anchor element and likewise
+- nested navigation like
+    - `soup.head`
+    - `soup.body.a`
+- navigate the children using `contents` attributes like
+    - `soup.body.contents`
+- navigate upwards/downwards using `.parent` like
+    -  `soup.title.parent`
+- navigate sideways using `.next_sibling` and `previous_sibling` like
+    - `soup.body.p.next_sibling`
+- and general navigation going back and forth using .`next_element` and `.previous_element`
+
+
+ search the tree using methods like
+- `find('a')` that returns first anchor element
+- `find_all('p')` that returns all occurences of paragraph elements
+- `find_parent('title')` that returns the closest parent
+- `find_parents('title')` that retuurns all the antecedents
+
+ and modify the tree structure by
+
+- replacing `.string` attribute value like
+    - `soup.title.string = <newString>`
+- or by using methods like
+    - `soup.a.append("Bar")` adds to the linktext
+    - `soup.a.extend(["a","b"])` adds again string but the representation has a list structure.
+
+More on [Navigating the Tree](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#navigating-the-tree), [Searching the Tree](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#searching-the-tree) and [Modifying the Tree](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#modifying-the-tree).
 
 On a preliminary investigation of the site as well as the HTML source, it is clear that the positions data is a table in the HTML document.
 
